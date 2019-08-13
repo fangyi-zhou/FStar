@@ -3,8 +3,6 @@ open Dynlink
 module U = FStar_Util
 module E = FStar_Errors
 
-let loaded_taclib = ref false
-
 (* We had weird failures, so don't trust in Dynlink.error_message *)
 let error_message : Dynlink.error -> string =
     fun e ->
@@ -28,19 +26,21 @@ let find_taclib () =
   | _ ->
       FStar_Options.fstar_bin_directory ^ "/fstar-tactics-lib"
 
+let dynlink fname =
+  try
+    U.print_error ("Loading plugin from " ^ fname ^ "\n");
+    Dynlink.loadfile fname
+  with Dynlink.Error e ->
+    failwith (U.format2 "Dynlinking %s failed: %s" fname (error_message e))
+
+let load_lib () =
+  (* It might not be there, just try to load it and ignore if not *)
+  try
+    dynlink (find_taclib () ^ "/fstartaclib.cmxs");
+    U.print_error ("Loaded fstartaclib successfully\n")
+  with | _ -> ()
 
 let load_tactic tac =
-  let dynlink fname =
-    try
-      print_string ("Loading plugin from " ^ fname ^ "\n");
-      Dynlink.loadfile fname
-    with Dynlink.Error e ->
-      failwith (U.format2 "Dynlinking %s failed: %s" fname (error_message e)) in
-
-  if not !loaded_taclib then begin
-    dynlink (find_taclib () ^ "/fstartaclib.cmxs");
-    loaded_taclib := true
-  end;
   dynlink tac;
   ignore (U.print1 "Dynlinked %s\n" tac)
 
