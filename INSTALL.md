@@ -246,7 +246,7 @@ The steps require a working OCaml setup. OCaml version from 4.05.X to 4.08.1 sho
 4. F\* depends on a bunch of external OCaml packages which you should install using OPAM:
 
   ```sh
-  $ opam install ocamlbuild ocamlfind batteries stdint zarith yojson fileutils pprint menhir ulex ppx_deriving ppx_deriving_yojson process
+  $ opam install ocamlbuild ocamlfind batteries stdint zarith yojson fileutils pprint menhir sedlex ppx_deriving ppx_deriving_yojson process
   ```
   
   **Note:** Some of these opam packages depend on binary packages that you need to install locally
